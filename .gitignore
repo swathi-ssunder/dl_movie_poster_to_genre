@@ -1,0 +1,6 @@
+.env/
+*.jpg
+*.7z
+*.swp
+datasets/posters/
+
