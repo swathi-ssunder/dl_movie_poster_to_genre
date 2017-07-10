@@ -19,7 +19,7 @@ def load_data(filename='datasets/MovieGenre.csv', width=182,
     - resize: True if image should be reshaped to square, default to False
 
     Output:
-    - datas: images of shape (N, C, H, W)
+    - data: images of shape (N, C, H, W)
     - labels: genre of images
     """
 
@@ -27,7 +27,7 @@ def load_data(filename='datasets/MovieGenre.csv', width=182,
     records = get_id_and_genre(filename, limit)
     limit = len(records)
     for record in records:
-        for genre in record[0]:
+        for genre in record[1]:
             genre_set.add(genre)
 
     genre_encoder = {}
@@ -36,7 +36,9 @@ def load_data(filename='datasets/MovieGenre.csv', width=182,
         genre_encoder[genre] = num_genre
         num_genre += 1
 
-    datas = np.zeros([limit, NUM_CHANNELS, height, width])
+    side = min(width, height)
+    data = np.zeros([limit, NUM_CHANNELS, width, height]) if not resize \
+            else np.zeros([limit, NUM_CHANNELS, side, side])
     labels = np.zeros([limit])
     for row in range(limit):
         index = records[row][0]
@@ -44,11 +46,10 @@ def load_data(filename='datasets/MovieGenre.csv', width=182,
         filename = IMAGES_PATH + str(index) + '.jpg'
         image = img.open(filename)
         if resize:
-            side = min(width, height)
             image = image.resize((side, side))
-        datas[row] = np.asarray(image).T
-        labels[row] = genre_encoder[records[index][0][0]]
-    return (datas, labels)
+        data[row] = np.asarray(image).T
+        labels[row] = genre_encoder[genre[0]]
+    return (data.transpose([0, 1, 3, 2]), labels)
 
 
 def get_id_and_genre(filename, limit):
