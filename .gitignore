@@ -3,4 +3,5 @@
 *.7z
 *.swp
 datasets/posters/
+*.pyc
 
