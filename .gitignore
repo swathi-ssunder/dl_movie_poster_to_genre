@@ -4,4 +4,5 @@
 *.swp
 datasets/posters/
 *.pyc
+.ipynb_checkpoints/
 
