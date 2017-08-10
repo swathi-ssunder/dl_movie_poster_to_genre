@@ -64,7 +64,10 @@ pretrained_models = {
 base_model = pretrained_models['resnet']
 the_model = CustomNet('resnet', base_model['model'], base_model['freeze'])
 
-the_model.load_state_dict(torch.load('model/model.pth.tar'))
+if USE_GPU:
+    the_model.load_state_dict(torch.load('model/model.pth.tar'))
+else:
+    the_model.load_state_dict(torch.load('model/model.pth.tar', map_location=lambda storage, loc: storage))
 
 if USE_GPU:
     the_model = the_model.cuda()
@@ -102,7 +105,10 @@ def predict(model, image):
 
     model.train(False)
 
-    image = Variable(image.cuda(), requires_grad=True)
+    if USE_GPU:
+        image = Variable(image, requires_grad=True)
+    else:
+        image = Variable(image.cuda(), requires_grad=True)
 
     # forward
     outputs = model(image)
